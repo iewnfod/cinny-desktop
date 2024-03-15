@@ -15,12 +15,11 @@ pub fn window_event_handler<R: tauri::Runtime>(
         // reopened through the tray.
         WindowEvent::CloseRequested { api, .. } => {
             api.prevent_close();
-            app.get_window(&label).unwrap().hide().unwrap();
-            app.tray_handle_by_id(TRAY_LABEL)
-                .unwrap()
-                .get_item("toggle")
-                .set_title("Show Cinny")
-                .unwrap();
+
+            tauri::AppHandle::hide(
+                &app.get_window(label)
+                .unwrap().app_handle()
+            ).unwrap();
         }
         _ => {}
     }
@@ -28,8 +27,8 @@ pub fn window_event_handler<R: tauri::Runtime>(
 
 /// Build the system tray object
 pub fn system_tray() -> SystemTray {
-    let toggle = CustomMenuItem::new("toggle".to_owned(), "Hide Cinny");
-    let quit = CustomMenuItem::new("quit".to_owned(), "Quit");
+    let toggle = CustomMenuItem::new("toggle".to_owned(), "Hide Cinny").accelerator("Command+S");
+    let quit = CustomMenuItem::new("quit".to_owned(), "Quit").accelerator("Command+Q");
     let menu = SystemTrayMenu::new()
         .add_item(toggle)
         .add_native_item(SystemTrayMenuItem::Separator)
@@ -44,7 +43,10 @@ pub fn toggle_window_state<R: tauri::Runtime>(window: Window<R>, tray_handle: Sy
     // Hide the window if it's visible, show it if not
     // `is_visible` returns true for minimized state for whatever reason
     if window.is_visible().unwrap() {
-        window.hide().unwrap();
+        tauri::AppHandle::hide(
+            &window.app_handle()
+        ).unwrap();
+
         tray_handle
             .get_item("toggle")
             .set_title("Show Cinny")
@@ -53,6 +55,7 @@ pub fn toggle_window_state<R: tauri::Runtime>(window: Window<R>, tray_handle: Sy
         window.unminimize().unwrap();
         window.show().unwrap();
         window.set_focus().unwrap();
+
         tray_handle
             .get_item("toggle")
             .set_title("Hide Cinny")

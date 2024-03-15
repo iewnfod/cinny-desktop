@@ -19,7 +19,7 @@ fn main() {
     builder
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(run_event_handler)
+        .run(run_event_handler);
 }
 
 fn run_event_handler<R: tauri::Runtime>(app: &tauri::AppHandle<R>, event: tauri::RunEvent) {

@@ -62,8 +62,8 @@
     "windows": [
       {
         "title": "Cinny",
-        "width": 1024,
-        "height": 724,
+        "width": 1200,
+        "height": 800,
         "center": true,
         "resizable": true,
         "fullscreen": false,
