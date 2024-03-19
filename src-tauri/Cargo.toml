@@ -4,7 +4,7 @@
 name = "cinny"
 version = "3.2.1"
 description = "Yet another matrix client"
-authors = ["Ajay Bura"]
+authors = ["Ajay Bura", "Iewnfod"]
 license = "AGPL-3.0-only"
 repository = "https://github.com/cinnyapp/cinny-desktop"
 default-run = "cinny"

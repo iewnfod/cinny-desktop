@@ -7,7 +7,13 @@ pub(crate) fn menu() -> Menu {
             Menu::new()
                 .add_native_item(MenuItem::About(
                     "Cinny".to_string(),
-                    AboutMetadata::new(),
+                    AboutMetadata::new()
+                        .authors(vec![
+                            "Cinny Development Team".to_string(),
+                            "Iewnfod".to_string()
+                        ])
+                        .website("https://github.com/iewnfod/cinny-desktop")
+                        .website_label("Github Repository")
                 ))
                 .add_native_item(MenuItem::Separator)
                 .add_native_item(MenuItem::Hide)
@@ -35,6 +41,7 @@ pub(crate) fn menu() -> Menu {
         .add_submenu(Submenu::new(
             "Window",
             Menu::new()
+                .add_native_item(MenuItem::CloseWindow)
                 .add_native_item(MenuItem::Minimize)
                 .add_native_item(MenuItem::Zoom),
         ))
