@@ -1,4 +1,5 @@
 use tauri::{AboutMetadata, Menu, MenuItem, Submenu};
+
 //for macOS
 pub(crate) fn menu() -> Menu {
     Menu::new()

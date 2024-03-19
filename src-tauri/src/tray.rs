@@ -1,9 +1,8 @@
 use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
-    SystemTrayMenuItem, WindowEvent, SystemTrayHandle, Window,
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, Window, WindowEvent
 };
 
-const TRAY_LABEL: &'static str = "main-tray";
+pub const TRAY_LABEL: &'static str = "main-tray";
 
 pub fn window_event_handler<R: tauri::Runtime>(
     app: &tauri::AppHandle<R>,
@@ -27,7 +26,7 @@ pub fn window_event_handler<R: tauri::Runtime>(
 
 /// Build the system tray object
 pub fn system_tray() -> SystemTray {
-    let toggle = CustomMenuItem::new("toggle".to_owned(), "Hide Cinny").accelerator("Command+S");
+    let toggle = CustomMenuItem::new("show".to_owned(), "Show Cinny").accelerator("Command+S");
     let quit = CustomMenuItem::new("quit".to_owned(), "Quit").accelerator("Command+Q");
     let menu = SystemTrayMenu::new()
         .add_item(toggle)
@@ -39,48 +38,25 @@ pub fn system_tray() -> SystemTray {
         .with_id(TRAY_LABEL.to_owned())
 }
 
-pub fn toggle_window_state<R: tauri::Runtime>(window: Window<R>, tray_handle: SystemTrayHandle<R>) {
-    // Hide the window if it's visible, show it if not
-    // `is_visible` returns true for minimized state for whatever reason
-    if window.is_visible().unwrap() {
-        tauri::AppHandle::hide(
-            &window.app_handle()
-        ).unwrap();
-
-        tray_handle
-            .get_item("toggle")
-            .set_title("Show Cinny")
-            .unwrap();
-    } else {
-        window.unminimize().unwrap();
-        window.show().unwrap();
-        window.set_focus().unwrap();
-
-        tray_handle
-            .get_item("toggle")
-            .set_title("Hide Cinny")
-            .unwrap();
-    };
+fn show_window<R: tauri::Runtime>(window: &Window<R>) {
+    window.show().unwrap();
+    window.set_focus().unwrap();
 }
 
 pub fn system_tray_handler<R: tauri::Runtime>(app: &tauri::AppHandle<R>, event: SystemTrayEvent) {
-    let tray_handle = match app.tray_handle_by_id(TRAY_LABEL) {
-        Some(h) => h,
-        None => return,
-    };
     let window = app.get_window("main").unwrap();
 
     match event {
         SystemTrayEvent::LeftClick { .. } => {
-            toggle_window_state(window, tray_handle);
+            show_window(&window)
         }
         SystemTrayEvent::MenuItemClick { id, .. } => {
             match id.as_str() {
                 "quit" => {
                     app.exit(0);
                 }
-                "toggle" => {
-                    toggle_window_state(window, tray_handle)
+                "show" => {
+                    show_window(&window);
                 }
                 _ => {}
             }
